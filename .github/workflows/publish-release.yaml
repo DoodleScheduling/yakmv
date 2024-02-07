@@ -1,0 +1,14 @@
+name: publish-release
+on:
+  release:
+    types: [published]
+
+jobs:
+  publish-release:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Harden Runner
+        uses: step-security/harden-runner@63c24ba6bd7ba022e95695ff85de572c04a18142 # v2.7.0
+        with:
+          egress-policy: audit        
+      - uses: Actions-R-Us/actions-tagger@330ddfac760021349fef7ff62b372f2f691c20fb # v2.0.3

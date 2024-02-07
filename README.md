@@ -18,6 +18,11 @@ What if there is a tool which can take a bunch of manifests including crds and v
 to a real cluster? Well this app does exactly that.
 It actually does apply all the manifests to a temporary real kube-apiserver behind the scenes.
 
+## Example usage
+
+```
+curl -L https://github.com/fluxcd/flux2/releases/download/v2.2.3/install.yaml | yakmv --kube-version=1.27.0 --table
+```
 
 ## Installation
 
@@ -41,14 +46,14 @@ docker pull ghcr.io/doodlescheduling/yakmv:v0
 | `` | `--allow-failure`  | `ALLOW_FAILURE` | `false` | Do not exit > 0 if an error occured |
 | `` | `--api-server-registry`  | `API_SERVER_REGISTRY` | `registry.k8s.io/kube-apiserver` | OCI registry for pulling the kube-apiserver image |
 | `` | `--etcd-registry`  | `ETCD_REGISTRY` | `quay.io/coreos/etcd` | OCI registry for pulling the etcd image |
-| `` | `--exclude-valid`  | `` | `` | Only included invalid manifests in the output |
+| `` | `--exclude-valid`  | `EXCLUDE_VALID` | `` | Only included invalid manifests in the output |
 | `` | `--kube-version`  | `KUBE_VERSION` | `1.28.0` | Kubernetes version, for instead 1.27.0. If not set the latest stable one is used |
 | `` | `--etcd-version`  | `ETCD_VERSION` | `3.5.11` | The version for etcd |
 | `-e` | `--log-encoding`  | `LOG_ENCODING` | `json` | Define the log format (default is json) [json,console] |
 | `-l` | `--log-level`  | `LOG_LEVEL` | `fatal` | Define the log level (default is warning) [debug,info,warn,error] |
-| `` | `--namespace`  | `` | `` | Default namespace to apply to resources without a namespace |
-| `` | `--skip-auto-namespace`  | `` | `false` | Do not create a namespace if it does not exists yet while validating a resource |
-| `` | `--table`  | `` | `false` |  |
+| `` | `--namespace`  | `` | `NAMESPACE` | Default namespace to apply to resources without a namespace |
+| `` | `--skip-auto-namespace`  | `SKIP_AUTO_NAMESPACE` | `false` | Do not create a namespace if it does not exists yet while validating a resource |
+| `` | `--table`  | `TABLE` | `false` |  |
 
 
 ## Github Action

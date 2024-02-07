@@ -106,9 +106,9 @@ func main() {
 
 	dockerClient, err := dockerclient.NewClientWithOpts(
 		dockerclient.FromEnv,
-		dockerclient.WithAPIVersionNegotiation(),
 	)
 	must(err)
+	dockerClient.NegotiateAPIVersion(ctx)
 
 	g := new(errgroup.Group)
 	g.Go(func() error {

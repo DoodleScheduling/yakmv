@@ -30,6 +30,7 @@ import (
 	"github.com/sethvargo/go-envconfig"
 	flag "github.com/spf13/pflag"
 	"go.uber.org/zap"
+	"golang.org/x/sync/errgroup"
 	corev1 "k8s.io/api/core/v1"
 	kerrors "k8s.io/apimachinery/pkg/api/errors"
 	v1 "k8s.io/apimachinery/pkg/apis/meta/v1"
@@ -108,6 +109,18 @@ func main() {
 		dockerclient.WithAPIVersionNegotiation(),
 	)
 	must(err)
+
+	g := new(errgroup.Group)
+	g.Go(func() error {
+		tag, _ := strings.CutPrefix(config.EtcdVersion, "v")
+		return pullImage(ctx, dockerClient, logger, fmt.Sprintf("%s:v%s", config.EtcdRegistry, tag))
+	})
+	g.Go(func() error {
+		tag, _ := strings.CutPrefix(config.KubeVersion, "v")
+		return pullImage(ctx, dockerClient, logger, fmt.Sprintf("%s:v%s", config.ApiServerRegistry, tag))
+	})
+
+	must(g.Wait())
 
 	logger.V(1).Info("starting etcd")
 	etcdSpecs, err := startEtcd(ctx, dockerClient)
@@ -389,13 +402,37 @@ func resetContainer(ctx context.Context, dockerClient *dockerclient.Client, id s
 	return nil
 }
 
+func pullImage(ctx context.Context, dockerClient *dockerclient.Client, logger logr.Logger, image string) error {
+	images, err := dockerClient.ImageList(ctx, types.ImageListOptions{})
+	if err != nil {
+		return err
+	}
+
+	for _, img := range images {
+		if slices.Contains(img.RepoTags, image) {
+			logger.V(1).Info("image already exists", "tag", image)
+			return nil
+		}
+	}
+
+	logger.Info("pulling image", "tag", image)
+	w, err := dockerClient.ImagePull(ctx, image, types.ImagePullOptions{})
+	if err != nil {
+		return err
+	}
+
+	defer w.Close()
+	_, err = io.Copy(io.Discard, w)
+	return err
+}
+
 func startEtcd(ctx context.Context, dockerClient *dockerclient.Client) (types.ContainerJSON, error) {
+	tag, _ := strings.CutPrefix(config.EtcdVersion, "v")
 	err := resetContainer(ctx, dockerClient, "/yakmv-etcd")
 	if err != nil {
 		return types.ContainerJSON{}, err
 	}
 
-	tag, _ := strings.CutPrefix(config.EtcdVersion, "v")
 	cont, err := dockerClient.ContainerCreate(
 		ctx,
 		&container.Config{

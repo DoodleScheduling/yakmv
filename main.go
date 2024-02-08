@@ -32,11 +32,12 @@ import (
 	"go.uber.org/zap"
 	"golang.org/x/sync/errgroup"
 	corev1 "k8s.io/api/core/v1"
-	apiext "k8s.io/apiextensions-apiserver/pkg/apis/apiextensions"
+	apiextv1 "k8s.io/apiextensions-apiserver/pkg/apis/apiextensions/v1"
 	kerrors "k8s.io/apimachinery/pkg/api/errors"
 	v1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/apis/meta/v1/unstructured"
 	kruntime "k8s.io/apimachinery/pkg/runtime"
+	"k8s.io/apimachinery/pkg/runtime/schema"
 	"k8s.io/apimachinery/pkg/runtime/serializer"
 	"k8s.io/apimachinery/pkg/util/wait"
 	utilyaml "k8s.io/apimachinery/pkg/util/yaml"
@@ -172,7 +173,8 @@ func main() {
 	})
 	must(err)
 
-	scheme := kruntime.NewScheme()
+	scheme := kubeClient.Scheme()
+	apiextv1.AddToScheme(scheme)
 	factory := serializer.NewCodecFactory(scheme)
 	decoder := factory.UniversalDeserializer()
 
@@ -190,7 +192,6 @@ func main() {
 
 			must(err)
 		}
-
 		obj := unstructured.Unstructured{}
 		_, gvk, err := decoder.Decode(
 			resourceYAML,
@@ -211,23 +212,27 @@ func main() {
 			namespaces[obj.GetNamespace()] = &corev1.Namespace{ObjectMeta: v1.ObjectMeta{Name: obj.GetNamespace()}}
 		}
 
-		switch gvk.Kind {
-		case "CustomResourceDefinition":
-			crd := apiext.CustomResourceDefinition{}
-			_, _, _ = decoder.Decode(
+		switch *gvk {
+		case schema.GroupVersionKind{Group: apiextv1.SchemeGroupVersion.Group, Version: apiextv1.SchemeGroupVersion.Version, Kind: "CustomResourceDefinition"}:
+			crd := apiextv1.CustomResourceDefinition{}
+			_, _, err = decoder.Decode(
 				resourceYAML,
-				nil,
+				&schema.GroupVersionKind{Group: apiextv1.SchemeGroupVersion.Group, Version: apiextv1.SchemeGroupVersion.Version, Kind: "CustomResourceDefinition"},
 				&crd)
+
+			if err != nil {
+				must(err)
+			}
 
 			// Conversion Webhook is unsupported since there will be no pods running handling the conversion request
 			if crd.Spec.Conversion != nil {
 				crd.Spec.Conversion.Strategy = "None"
 			}
 			crds = append(crds, &crd)
-		case "Namespace":
+		case schema.GroupVersionKind{Group: "", Version: "v1", Kind: "Namespace"}:
 			namespaces[obj.GetName()] = &obj
 		default:
-			objects = append(objects, &obj)
+			//	objects = append(objects, &obj)
 		}
 	}
 
@@ -324,9 +329,9 @@ func (i indexedObjects) Slice() []client.Object {
 func applyObjects(ctx context.Context, kubeClient client.Client, logger logr.Logger, objects []client.Object, results chan error) {
 	for _, o := range objects {
 		obj := o
-		go func() {
-			err := kubeClient.Create(ctx, obj)
+		go func(obj client.Object) {
 			gvk := obj.GetObjectKind().GroupVersionKind()
+			err := kubeClient.Create(ctx, obj)
 			logger := logger.WithValues(
 				"name", obj.GetName(),
 				"namespace", obj.GetNamespace(),
@@ -354,7 +359,7 @@ func applyObjects(ctx context.Context, kubeClient client.Client, logger logr.Log
 					tbl.AppendRow([]interface{}{obj.GetName(), obj.GetNamespace(), gvk.Kind, strings.TrimLeft(fmt.Sprintf("%s/%s", gvk.Group, gvk.Version), "/"), color.GreenString("VALID"), ""})
 				}
 			}
-		}()
+		}(obj)
 	}
 }
 

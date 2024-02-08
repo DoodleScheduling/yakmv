@@ -32,6 +32,7 @@ import (
 	"go.uber.org/zap"
 	"golang.org/x/sync/errgroup"
 	corev1 "k8s.io/api/core/v1"
+	apiext "k8s.io/apiextensions-apiserver/pkg/apis/apiextensions"
 	kerrors "k8s.io/apimachinery/pkg/api/errors"
 	v1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/apis/meta/v1/unstructured"
@@ -212,7 +213,17 @@ func main() {
 
 		switch gvk.Kind {
 		case "CustomResourceDefinition":
-			crds = append(crds, &obj)
+			crd := apiext.CustomResourceDefinition{}
+			_, _, _ = decoder.Decode(
+				resourceYAML,
+				nil,
+				&crd)
+
+			// Conversion Webhook is unsupported since there will be no pods running handling the conversion request
+			if crd.Spec.Conversion != nil {
+				crd.Spec.Conversion.Strategy = "None"
+			}
+			crds = append(crds, &crd)
 		case "Namespace":
 			namespaces[obj.GetName()] = &obj
 		default:

@@ -227,12 +227,14 @@ func main() {
 			// Conversion Webhook is unsupported since there will be no pods running handling the conversion request
 			if crd.Spec.Conversion != nil {
 				crd.Spec.Conversion.Strategy = "None"
+				crd.Spec.Conversion.Webhook = nil
 			}
+
 			crds = append(crds, &crd)
 		case schema.GroupVersionKind{Group: "", Version: "v1", Kind: "Namespace"}:
 			namespaces[obj.GetName()] = &obj
 		default:
-			//	objects = append(objects, &obj)
+			objects = append(objects, &obj)
 		}
 	}
 

@@ -62,6 +62,7 @@ type Config struct {
 	EtcdVersion       string `env:"ETCD_VERSION, default=3.5.11"`
 	ApiServerRegistry string `env:"API_SERVER_REGISTRY, default=registry.k8s.io/kube-apiserver"`
 	EtcdRegistry      string `env:"ETCD_REGISTRY, default=quay.io/coreos/etcd"`
+	CertDir           string `env:"CERT_DIR"`
 }
 
 var (
@@ -84,6 +85,7 @@ func init() {
 	flag.StringVarP(&config.ApiServerRegistry, "api-server-registry", "", "", "OCI registry for pulling the kube-apiserver image")
 	flag.StringVarP(&config.EtcdRegistry, "etcd-registry", "", "", "OCI registry for pulling the etcd image")
 	flag.StringVarP(&config.EtcdVersion, "etcd-version", "", "", "The version for etcd")
+	flag.StringVarP(&config.CertDir, "cert-dir", "", "", "Alternative host mount path for the temporary cert directoy. Use only in the case yakmv runs itself within a container and TMPDIR is not the same path as on the docker host.")
 
 	tbl = table.NewWriter()
 	tbl.SetOutputMirror(output)
@@ -498,6 +500,10 @@ func startAPIServer(ctx context.Context, dockerClient *dockerclient.Client, etcd
 	err = os.WriteFile(filepath.Join(certDir, "token"), []byte(tokenFile), 0644)
 	if err != nil {
 		return types.ContainerJSON{}, err
+	}
+
+	if config.CertDir != "" {
+		certDir = filepath.Join(config.CertDir, filepath.Base(certDir))
 	}
 
 	tag, _ := strings.CutPrefix(config.KubeVersion, "v")

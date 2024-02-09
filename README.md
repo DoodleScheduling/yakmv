@@ -54,6 +54,7 @@ docker pull ghcr.io/doodlescheduling/yakmv:v0
 | `` | `--namespace`  | `` | `NAMESPACE` | Default namespace to apply to resources without a namespace |
 | `` | `--skip-auto-namespace`  | `SKIP_AUTO_NAMESPACE` | `false` | Do not create a namespace if it does not exists yet while validating a resource |
 | `` | `--table`  | `TABLE` | `false` |  |
+| `` | `--api-server-flags`  | `API_SERVER_FLAGS` | `--api-server-flags=--disable-admission-plugins=MutatingAdmissionWebhook,ValidatingAdmissionPolicy,ValidatingAdmissionWebhook` | Set additional kube-apiserver flags. (Note: If set by env the arguments need to be delimited by `;`) |
 
 
 ## Github Action

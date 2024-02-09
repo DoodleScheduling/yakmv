@@ -5,20 +5,20 @@
 class Yakmv < Formula
   desc "Kubernetes manifest validator"
   homepage "https://github.com/doodlescheduling/yakmv"
-  version "0.0.8"
+  version "0.0.9"
 
   on_macos do
     if Hardware::CPU.intel?
-      url "https://github.com/DoodleScheduling/yakmv/releases/download/v0.0.8/yakmv_0.0.8_darwin_amd64.tar.gz"
-      sha256 "38c913688df1d08cecf81df0d8e4db381187187f0edd6204ccd245f7ce6ffaf9"
+      url "https://github.com/DoodleScheduling/yakmv/releases/download/v0.0.9/yakmv_0.0.9_darwin_amd64.tar.gz"
+      sha256 "bcdaa10b762096b22efae5cd91e1e0e46e5ac8298b18fc6090a9ab8ae4985483"
 
       def install
         bin.install "yakmv"
       end
     end
     if Hardware::CPU.arm?
-      url "https://github.com/DoodleScheduling/yakmv/releases/download/v0.0.8/yakmv_0.0.8_darwin_arm64.tar.gz"
-      sha256 "84b00b249fa9397737a60a34482cfa7ade16b252e52db28b7d48d943e390974e"
+      url "https://github.com/DoodleScheduling/yakmv/releases/download/v0.0.9/yakmv_0.0.9_darwin_arm64.tar.gz"
+      sha256 "369035f2a20beb31eaa77ca0e72f94397f1e9771a751c438fd1c84ff919099b8"
 
       def install
         bin.install "yakmv"
@@ -28,16 +28,16 @@ class Yakmv < Formula
 
   on_linux do
     if Hardware::CPU.arm? && Hardware::CPU.is_64_bit?
-      url "https://github.com/DoodleScheduling/yakmv/releases/download/v0.0.8/yakmv_0.0.8_linux_arm64.tar.gz"
-      sha256 "ea6b9ca6184ffac5570c21dd5b785fe36ccfdb9291a3aa32ac2fdd6e9818a3c4"
+      url "https://github.com/DoodleScheduling/yakmv/releases/download/v0.0.9/yakmv_0.0.9_linux_arm64.tar.gz"
+      sha256 "baac229289419f1079e8c32c2bded63fcd152a26426001b14d7ca5dbd954fcdc"
 
       def install
         bin.install "yakmv"
       end
     end
     if Hardware::CPU.intel?
-      url "https://github.com/DoodleScheduling/yakmv/releases/download/v0.0.8/yakmv_0.0.8_linux_amd64.tar.gz"
-      sha256 "c091418f484c16a538ec7ccbc83a3a53c44c815e874a43ea86b3bf35801e5178"
+      url "https://github.com/DoodleScheduling/yakmv/releases/download/v0.0.9/yakmv_0.0.9_linux_amd64.tar.gz"
+      sha256 "d86abd7cacaf95c332b14f981e59ca6e9fd14cfd0d4abd5226d9b8d22fd6aabb"
 
       def install
         bin.install "yakmv"

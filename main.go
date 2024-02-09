@@ -53,18 +53,18 @@ type Config struct {
 		Level    string `env:"LOG_LEVEL, default=fatal"`
 		Encoding string `env:"LOG_ENCODING, default=json"`
 	}
-	File              string   `env:"FILE, default=/dev/stdin"`
-	FailFast          bool     `env:"FAIL_FAST"`
-	AllowFailure      bool     `env:"ALLOW_FAILURE"`
-	SkipAutoNamespace bool     `env:"SKIP_AUTO_NAMESPACE"`
-	Namespace         string   `env:"NAMESPACE"`
-	Table             bool     `env:"TABLE"`
-	ExcludeValid      bool     `env:"EXCLUDE_VALID"`
-	KubeVersion       string   `env:"KUBE_VERSION, default=1.28.0"`
-	EtcdVersion       string   `env:"ETCD_VERSION, default=3.5.11"`
-	ApiServerRegistry string   `env:"API_SERVER_REGISTRY, default=registry.k8s.io/kube-apiserver"`
-	EtcdRegistry      string   `env:"ETCD_REGISTRY, default=quay.io/coreos/etcd"`
-	ApiServerFlags    []string `env:"API_SERVER_FLAGS, delimiter=;, default=--api-server-flags=--disable-admission-plugins=MutatingAdmissionWebhook,ValidatingAdmissionPolicy,ValidatingAdmissionWebhook"`
+	File              string `env:"FILE, default=/dev/stdin"`
+	FailFast          bool   `env:"FAIL_FAST"`
+	AllowFailure      bool   `env:"ALLOW_FAILURE"`
+	SkipAutoNamespace bool   `env:"SKIP_AUTO_NAMESPACE"`
+	Namespace         string `env:"NAMESPACE"`
+	Table             bool   `env:"TABLE"`
+	ExcludeValid      bool   `env:"EXCLUDE_VALID"`
+	KubeVersion       string `env:"KUBE_VERSION, default=1.28.0"`
+	EtcdVersion       string `env:"ETCD_VERSION, default=3.5.11"`
+	ApiServerRegistry string `env:"API_SERVER_REGISTRY, default=registry.k8s.io/kube-apiserver"`
+	EtcdRegistry      string `env:"ETCD_REGISTRY, default=quay.io/coreos/etcd"`
+	ApiServerFlags    string `env:"API_SERVER_FLAGS, default=--disable-admission-plugins=MutatingAdmissionWebhook,ValidatingAdmissionPolicy,ValidatingAdmissionWebhook"`
 }
 
 var (
@@ -87,7 +87,7 @@ func init() {
 	flag.StringVarP(&config.ApiServerRegistry, "api-server-registry", "", "", "OCI registry for pulling the kube-apiserver image")
 	flag.StringVarP(&config.EtcdRegistry, "etcd-registry", "", "", "OCI registry for pulling the etcd image")
 	flag.StringVarP(&config.EtcdVersion, "etcd-version", "", "", "The version for etcd")
-	flag.StringSliceVarP(&config.ApiServerFlags, "api-server-flags", "", nil, "Set additional kube-apiserver flags")
+	flag.StringVarP(&config.ApiServerFlags, "api-server-flags", "", "", "Set additional kube-apiserver flags")
 
 	tbl = table.NewWriter()
 	tbl.SetOutputMirror(output)
@@ -529,7 +529,7 @@ func startAPIServer(ctx context.Context, dockerClient *dockerclient.Client, etcd
 		"--service-account-signing-key-file=/certs/service-account-key.pem",
 		"--token-auth-file=/certs/token",
 		"--enable-priority-and-fairness=false",
-	}, config.ApiServerFlags...)
+	}, strings.Split(config.ApiServerFlags, " ")...)
 
 	tag, _ := strings.CutPrefix(config.KubeVersion, "v")
 	cont, err := dockerClient.ContainerCreate(

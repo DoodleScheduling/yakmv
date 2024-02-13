@@ -249,11 +249,11 @@ func main() {
 	sum, err := validate(ctx, kubeClient, logger, crds, namespaces.Slice(), objects)
 	must(err)
 
-	if config.Table {
+	if config.Table && tbl.Length() > 0 {
 		tbl.Render()
-	} else {
-		fmt.Fprintln(output, sum.String())
 	}
+
+	fmt.Fprintln(output, sum.String())
 
 	if !config.AllowFailure && sum.errors > 0 {
 		os.Exit(1)

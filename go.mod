@@ -1,11 +1,13 @@
 module github.com/doodlescheduling/yakmv
 
-go 1.20
+go 1.21
+
+toolchain go1.22.0
 
 require (
 	github.com/docker/docker v24.0.7+incompatible
 	github.com/fatih/color v1.16.0
-	github.com/go-logr/logr v1.3.0
+	github.com/go-logr/logr v1.4.1
 	github.com/go-logr/zapr v1.2.4
 	github.com/jedib0t/go-pretty/v6 v6.5.4
 	github.com/sethvargo/go-envconfig v1.0.0

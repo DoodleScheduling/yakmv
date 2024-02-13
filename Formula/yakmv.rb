@@ -5,20 +5,20 @@
 class Yakmv < Formula
   desc "Kubernetes manifest validator"
   homepage "https://github.com/doodlescheduling/yakmv"
-  version "0.0.11"
+  version "0.0.12"
 
   on_macos do
-    if Hardware::CPU.intel?
-      url "https://github.com/DoodleScheduling/yakmv/releases/download/v0.0.11/yakmv_0.0.11_darwin_amd64.tar.gz"
-      sha256 "ac8c669755f12ee8f1664a8acec395d227805ba254cead52d7b0351c03f057c1"
+    if Hardware::CPU.arm?
+      url "https://github.com/DoodleScheduling/yakmv/releases/download/v0.0.12/yakmv_0.0.12_darwin_arm64.tar.gz"
+      sha256 "a00d9b4b37973a9fed181c8532365b653ab32ec36cf35bd88c1bee81971916f5"
 
       def install
         bin.install "yakmv"
       end
     end
-    if Hardware::CPU.arm?
-      url "https://github.com/DoodleScheduling/yakmv/releases/download/v0.0.11/yakmv_0.0.11_darwin_arm64.tar.gz"
-      sha256 "fb6cd3c4f8c85c51fd1ecd4e944e159cac62efec54985afc1f6ee8262144d3e0"
+    if Hardware::CPU.intel?
+      url "https://github.com/DoodleScheduling/yakmv/releases/download/v0.0.12/yakmv_0.0.12_darwin_amd64.tar.gz"
+      sha256 "3fb849f256ff1e92060832b68ad9dcb51e05c40a384aeefb36f5ad6107845daf"
 
       def install
         bin.install "yakmv"
@@ -28,16 +28,16 @@ class Yakmv < Formula
 
   on_linux do
     if Hardware::CPU.arm? && Hardware::CPU.is_64_bit?
-      url "https://github.com/DoodleScheduling/yakmv/releases/download/v0.0.11/yakmv_0.0.11_linux_arm64.tar.gz"
-      sha256 "24d253f0bb937c08dba7c4ebf090737298f3ecf988b75e2ba38952193df2ec55"
+      url "https://github.com/DoodleScheduling/yakmv/releases/download/v0.0.12/yakmv_0.0.12_linux_arm64.tar.gz"
+      sha256 "41bd54f35ceed4bf9a2fd23490e378c2914f9b0c459bf8281d17941c4eab16ae"
 
       def install
         bin.install "yakmv"
       end
     end
     if Hardware::CPU.intel?
-      url "https://github.com/DoodleScheduling/yakmv/releases/download/v0.0.11/yakmv_0.0.11_linux_amd64.tar.gz"
-      sha256 "5a71efc8ba53102bcc98cf936339d5583012c8feaf475b19a02a4bcf07639909"
+      url "https://github.com/DoodleScheduling/yakmv/releases/download/v0.0.12/yakmv_0.0.12_linux_amd64.tar.gz"
+      sha256 "29b26757653f93cb40251fcda935534b742ae3aa73ff0512491b0088c398804a"
 
       def install
         bin.install "yakmv"

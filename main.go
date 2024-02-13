@@ -344,8 +344,6 @@ func applyObjects(ctx context.Context, kubeClient client.Client, logger logr.Log
 				"version", gvk.Version,
 			)
 
-			results <- err
-
 			if err != nil {
 				if kerrors.IsAlreadyExists(err) {
 					return
@@ -363,6 +361,8 @@ func applyObjects(ctx context.Context, kubeClient client.Client, logger logr.Log
 					tbl.AppendRow([]interface{}{obj.GetName(), obj.GetNamespace(), gvk.Kind, strings.TrimLeft(fmt.Sprintf("%s/%s", gvk.Group, gvk.Version), "/"), color.GreenString("VALID"), ""})
 				}
 			}
+
+			results <- err
 		}(obj)
 	}
 }

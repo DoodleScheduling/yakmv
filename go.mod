@@ -1,6 +1,8 @@
 module github.com/doodlescheduling/yakmv
 
-go 1.20
+go 1.21
+
+toolchain go1.22.0
 
 require (
 	github.com/docker/docker v24.0.7+incompatible
@@ -12,7 +14,7 @@ require (
 	github.com/spf13/pflag v1.0.5
 	github.com/stretchr/testify v1.8.4
 	go.uber.org/zap v1.26.0
-	golang.org/x/sync v0.4.0
+	golang.org/x/sync v0.6.0
 	k8s.io/api v0.28.3
 	k8s.io/apiextensions-apiserver v0.28.3
 	k8s.io/apimachinery v0.28.3

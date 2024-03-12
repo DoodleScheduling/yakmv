@@ -1,6 +1,8 @@
 module github.com/doodlescheduling/yakmv
 
-go 1.20
+go 1.21
+
+toolchain go1.22.1
 
 require (
 	github.com/docker/docker v24.0.7+incompatible
@@ -17,7 +19,7 @@ require (
 	k8s.io/apiextensions-apiserver v0.28.3
 	k8s.io/apimachinery v0.28.3
 	k8s.io/client-go v0.28.3
-	k8s.io/utils v0.0.0-20230726121419-3b25d923346b
+	k8s.io/utils v0.0.0-20240310230437-4693a0247e57
 	sigs.k8s.io/controller-runtime v0.16.3
 	sigs.k8s.io/kustomize/kyaml v0.14.3-0.20230601165947-6ce0bf390ce3
 )

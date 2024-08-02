@@ -3,7 +3,7 @@ module github.com/doodlescheduling/yakmv
 go 1.20
 
 require (
-	github.com/docker/docker v24.0.7+incompatible
+	github.com/docker/docker v25.0.6+incompatible
 	github.com/fatih/color v1.16.0
 	github.com/go-logr/logr v1.3.0
 	github.com/go-logr/zapr v1.2.4
